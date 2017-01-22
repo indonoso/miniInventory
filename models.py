@@ -1,34 +1,77 @@
 from app import db
-from sqlalchemy.dialects.postgresql import JSON
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, PrimaryKeyConstraint
+
+
+class Brand(db.Model):
+    __tablename__ = 'brand'
+    name = db.Column(db.String(100), primary_key=True)
+    id = db.Column(db.Integer, autoincrement=True)
+    abreviation = db.Column(db.String(10))
 
 
 class Product(db.Model):
-    __product__ = 'results'
-
-    name = db.Column(db.String(100))
+    __tablename__ = 'product'
     production_time = db.Column(db.Integer)
-    brand = db.Column(db.String(100), ForeignKey("brand.name"))
+    name = db.Column(db.String(100))
+    brand = db.Column(db.String(100), ForeignKey('brand.name'))
+    unit = db.Column(db.String(10))
+    type = db.Column(db.String(30))
+    description = db.Column(db.String(255))
+    code = db.Column(db.String(30), primary_key=True)
+    id = db.Column(db.Integer, autoincrement=True)
+    current_selling_price = db.Column(db.Integer)
+    current_quantity = db.Column(db.Integer)
+    image = db.Column(db.Text)
 
-    def __init__(self, url, result_all, result_no_stop_words):
-        self.url = url
-        self.result_all = result_all
-        self.result_no_stop_words = result_no_stop_words
 
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
+class Purchase(db.Model):
+    __tablename__ = 'purchase'
+    product = db.Column(db.String(30), ForeignKey('product.code'))
+    quantity = db.Column(db.Integer)
+    price = db.Column(db.Integer)
+    entity = db.Column(db.String(255))
+    action_date = db.Column(db.Integer)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
 
-"""
-  production_time int,
-  name VARCHAR(100),
-  brand VARCHAR(100) REFERENCES brand(name),
-  unit VARCHAR(10),
-  type VARCHAR(30),
-  description VARCHAR(255),
-  codigo VARCHAR(30) PRIMARY KEY,
-  id SERIAL,
-  current_selling_price int,
-  current_quantity int,
-  image text
-"""
+class Sale(db.Model):
+    __tablename__ = 'sale'
+    product = db.Column(db.String(30), ForeignKey('product.code'))
+    quantity = db.Column(db.Integer)
+    price = db.Column(db.Integer)
+    entity = db.Column(db.String(255))
+    action_date = db.Column(db.Integer)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+
+class Produce(db.Model):
+    __tablename__ = 'produce'
+    product = db.Column(db.String(30), ForeignKey('product.code'))
+    quantity = db.Column(db.Integer)
+    action_date = db.Column(db.Integer)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+
+class Production_needs(db.Model):
+    __tablename__ = 'production_needs'
+
+    __table_args__ = (
+        PrimaryKeyConstraint('product_out', 'product_in'),
+    )
+
+    product_out = db.Column(db.String(30), ForeignKey('product.code'))
+    product_in = db.Column(db.String(30), ForeignKey('product.code'))
+    quantity = db.Column(db.Integer)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+
+
+
+
+
+
+
+
+
+
+
