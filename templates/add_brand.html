@@ -1,9 +1,9 @@
-{% extends "layout.html" %}
-
+{% extends "layout.html" %}s
 {% block body %}
-<div class="col-lg-12">
+    <div class="col-lg-12">
+
 {% from "_formhelpers.html" import render_field %}
- <form action="/add_product" method="POST">
+ <form action="/add_brand" method="POST">
      {% for field in form %}
      <div class="form-group">
         {{ render_field(field) }}
@@ -11,5 +11,5 @@
      {% endfor%}
      <input type=submit value=Register>
  </form>
-    </div>
+      </div>
 {% endblock %}
