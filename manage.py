@@ -13,6 +13,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 with app.app_context():
   from models import *
 
+
 migrate = Migrate(app, db)
 manager = Manager(app)
 
