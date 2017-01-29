@@ -1,14 +1,13 @@
 from flask import Flask, render_template, request
 from config import APP_SETTINGS
-from flask_sqlalchemy import SQLAlchemy
+from forms import db
 
 app = Flask(__name__)
 app.config.from_object(APP_SETTINGS)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+db.init_app(app)
 
-from models import Product, Produce, Production_needs, Brand, Purchase, Sale
-from forms import ProductForm, BrandForm
+from forms import ProductForm, BrandForm, Product, Production, ProductionNeeds, Brand, Purchase, Sale, Supplier
 
 
 @app.route('/')
@@ -20,12 +19,7 @@ def hello_world():
 def add_product():
     form = ProductForm(request.form)
     if request.method == 'POST' and form.validate():
-        product = Product(form.production_time.data, form.name.data,
-                    form.brand.data, form.unit.data, form.type.data,
-                    form.description.data, form.code.data, form.current_selling_price.data,
-                    form.current_quantity.data, form.image.data)
-
-
+        product = Product(**form.data)
         db.session.add(product)
         db.session.commit()
     return render_template('add_product.html', form=form)
