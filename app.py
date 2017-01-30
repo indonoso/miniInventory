@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from config import APP_SETTINGS
 from forms import db
-
+import json
 app = Flask(__name__)
 app.config.from_object(APP_SETTINGS)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -10,11 +10,13 @@ PRODUCTS_PER_PAGE = 20
 from forms import FinishedProductForm, BrandForm, Product, SupplierForm, Production, ProductionNeeds, Brand, Purchase, Sale, Supplier, ToolForm, CompoundForm
 
 
-forms = dict(product=(FinishedProductForm, Product, dict(type_="finished", unit="un"), 'add_product.html', 'brand'),
-             tool=(ToolForm, Product, dict(type_="tool", unit="un"), "add_tool.html", 'brand'),
-             compound=(CompoundForm, Product, dict(type_="compound") , 'add_compound.html', 'brand'),
-             brand=(BrandForm, Brand, dict(), 'add_brand.html', 'supplier'),
-             supplier=(SupplierForm, Supplier, dict(), 'add_supplier.html', ''))
+forms = dict(product=(FinishedProductForm, Product, dict(type_="finished", unit="un"), 'add.html', 'brand', False),
+             tool=(ToolForm, Product, dict(type_="tool", unit="un"), "add.html", 'brand', True),
+             compound=(CompoundForm, Product, dict(type_="compound"), 'add.html', 'brand', True),
+             brand=(BrandForm, Brand, dict(), 'add.html', 'supplier', True),
+             supplier=(SupplierForm, Supplier, dict(), 'add.html', '', True))
+
+types = dict(product="finished", tool="tool", compound="compound")
 
 
 @app.route('/')
@@ -24,7 +26,7 @@ def index():
 
 @app.route('/add/<item>', methods=['GET', 'POST'])
 def add(item):
-    form_class, item_class, kwargs, template, choices = forms[item]
+    form_class, item_class, kwargs, template, choices, redirect_form = forms[item]
     form = form_class(request.form)
     if choices == 'brand':
         form.brand.choices = [(b.id_, b.name) for b in Brand.query.all()]
@@ -35,8 +37,27 @@ def add(item):
         item_ = item_class(**form.data, **kwargs)
         db.session.add(item_)
         db.session.commit()
-        return redirect('/add/' + item)
+        if redirect_form:
+            return redirect('/add/' + item)
+        else:
+            return redirect('see_product/' + item_.id_)
     return render_template(template, form=form, item=item)
+
+
+@app.route('/add/component/<int:product_id>', methods=['POST'])
+def add_component(product_id):
+    form = ProductionNeeds(request.form)
+    if request.method == 'POST' and form.validate():
+        relation = ProductionNeeds(product_out=product_id, **form.data)
+        db.session.add(relation)
+        db.session.commit()
+        return 201
+    return 400
+
+
+@app.route("/query_all/<string:type_>", methods=["GET"])
+def query_all(type_):
+    return Product.query.filter(Product.type_ == type_)
 
 
 @app.route('/see_products', methods=['GET', 'POST'])
@@ -50,6 +71,17 @@ def see_products(page=1):
 def see_product(product_id):
     product = Product.query.get(product_id)
     return render_template('see_product.html', product=product)
+
+
+@app.route('/product/get_unit/<int:product_id>')
+def get_unit_for_product(product_id):
+    product = Product.query.get(product_id)
+    return product.unit
+
+
+@app.route('/product/get_all_choices')
+def get_all_products():
+    return "".join(['<option value="{}">{}</option>'.format(p.id_, p.name) for p in Product.query.all()])
 
 
 if __name__ == '__main__':
