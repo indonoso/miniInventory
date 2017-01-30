@@ -56,10 +56,9 @@ class ToolForm(FlaskForm):
 
 
 class ProductionNeedsForm(FlaskForm):
-    product_out = StringField('product_out')
-    product_in = StringField('product_in')
-    quantity = IntegerField('quantity')
-    id = IntegerField('id')
+    product_in = SelectField('Insumo/Herramienta', [InputRequired], coerce=int, choices=[])
+    quantity = IntegerField('Cantidad', [InputRequired()])
+    comments = TextAreaField('Objetivo', render_kw={"placeholder": "Uso"})
 
 
 class PurchaseForm(FlaskForm):
@@ -68,7 +67,6 @@ class PurchaseForm(FlaskForm):
     price = IntegerField('price')
     entity = StringField('entity')
     action_date = IntegerField('action_date')
-    id = IntegerField('id')
 
 
 class SaleForm(FlaskForm):
@@ -77,12 +75,10 @@ class SaleForm(FlaskForm):
     price = IntegerField('price')
     entity = StringField('entity')
     action_date = IntegerField('action_date')
-    id = IntegerField('id')
 
 
 class ProduceForm(FlaskForm):
     product = StringField('product')
     quantity = IntegerField('quantity')
     action_date = IntegerField('action_date')
-    id = IntegerField('id')
 

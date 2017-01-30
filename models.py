@@ -83,6 +83,7 @@ class ProductionNeeds(db.Model):
     product_out = db.Column(db.Integer, ForeignKey('product.id_'))
     product_in = db.Column(db.Integer, ForeignKey('product.id_'))
     quantity = db.Column(db.Integer)
+    comment = db.Column(db.Text)
     id_ = db.Column(db.Integer, autoincrement=True)
 
     __table_args__ = (
