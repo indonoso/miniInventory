@@ -9,11 +9,6 @@ Base = declarative_base()
 
 db = SQLAlchemy()
 
-association_table = Table('association', Base.metadata,
-    Column('left_id', Integer, ForeignKey('left.id')),
-    Column('right_id', Integer, ForeignKey('right.id'))
-)
-
 
 class Supplier(db.Model):
     __tablename__ = 'supplier'
@@ -22,9 +17,8 @@ class Supplier(db.Model):
     abbreviation = db.Column(db.String(10))
     address = db.Column(db.Text)
     comments = db.Column(db.Text)
-    brands = relationship("Brand", secondary=association_table)
 
-    def __init__(self, name=None, abbreviation=None, address=None, comments=None, id_=None):
+    def __init__(self, name=None, abbreviation=None, address=None, comments=None, id_=None, **kwargs):
         self.name = name
         self.abbreviation = abbreviation
         self.address = address
@@ -38,8 +32,9 @@ class Brand(db.Model):
     id_ = db.Column(db.Integer, primary_key=True, autoincrement=True)
     abbreviation = db.Column(db.String(10))
     comments = db.Column(db.Text)
+    supplier = db.Column(db.Integer, ForeignKey('supplier.id_'))
 
-    def __init__(self, name=None, abbreviation=None, comments=None, id_=None):
+    def __init__(self, name=None, abbreviation=None, comments=None, id_=None,  **kwargs):
         self.name = name
         self.abbreviation = abbreviation
         self.comments = comments
@@ -61,8 +56,8 @@ class Product(db.Model):
     color = db.Column(db.String(20))
     shape = db.Column(db.String(20))
 
-    def __init__(self, production_time=None, name=None, brand=None, unit=None, description=None, code=None,
-                 current_selling_price=None, current_quantity=None, image=None, id_=None, type_=None, color=None, shape=None):
+    def __init__(self, production_time=None, name=None, brand=None, unit=None, description=None,
+                 current_selling_price=None, current_quantity=None, image=None, id_=None, type_=None, color=None, shape=None,  **kwargs):
         self.production_time = production_time
         self.name = name
         self.brand = brand
@@ -88,7 +83,7 @@ class ProductionNeeds(db.Model):
         PrimaryKeyConstraint('product_out', 'product_in'),
     )
 
-    def __init__(self, product_out=None, product_in=None, quantity=None, id_=None):
+    def __init__(self, product_out=None, product_in=None, quantity=None, id_=None,  **kwargs):
         self.product_out = product_out
         self.product_in = product_in
         self.quantity = quantity
@@ -105,7 +100,7 @@ class Purchase(db.Model):
     action_date = db.Column(db.Integer)
     id_ = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
-    def __init__(self, product=None, quantity=None, price=None, entity=None, action_date=None, id_=None):
+    def __init__(self, product=None, quantity=None, price=None, entity=None, action_date=None, id_=None,  **kwargs):
         self.product = product
         self.quantity = quantity
         self.price = price
@@ -123,7 +118,7 @@ class Sale(db.Model):
     action_date = db.Column(db.Integer)
     id_ = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
-    def __init__(self, product=None, quantity=None, price=None, entity=None, action_date=None, id_=None):
+    def __init__(self, product=None, quantity=None, price=None, entity=None, action_date=None, id_=None,  **kwargs):
         self.product = product
         self.quantity = quantity
         self.price = price
@@ -139,7 +134,7 @@ class Production(db.Model):
     action_date = db.Column(db.Integer)
     id_ = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
-    def __init__(self, product=None, quantity=None, action_date=None, id_=None):
+    def __init__(self, product=None, quantity=None, action_date=None, id_=None,  **kwargs):
         self.product = product
         self.quantity = quantity
         self.action_date = action_date
