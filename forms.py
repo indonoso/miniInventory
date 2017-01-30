@@ -1,4 +1,4 @@
-from wtforms import BooleanField, StringField, PasswordField, validators, IntegerField, TextAreaField, SelectField
+from wtforms import BooleanField, StringField, PasswordField, validators, IntegerField, TextAreaField, SelectField, SelectMultipleField
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired, Length
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
@@ -16,10 +16,11 @@ class BrandForm(FlaskForm):
     name = StringField('Nombre de la marca', [InputRequired(), Length(min=1, max=100)])
     abbreviation = StringField('Nombre abreviado', [InputRequired(), Length(min=1, max=10)])
     comments = TextAreaField("Comentarios sobre la marca")
+    supplier = SelectMultipleField("Proveedores", coerce=int, choices=[], default=1)
 
 
 class FinishedProductForm(FlaskForm):
-    name = StringField('Nombre', [validators.required()])
+    name = StringField('Nombre', [InputRequired()])
     brand = SelectField('Marca', coerce=int,  choices=[])
     production_time = IntegerField('Tiempo mínimo de producción', [InputRequired()], render_kw={"placeholder": "En horas"})
     description = TextAreaField('Descripción')

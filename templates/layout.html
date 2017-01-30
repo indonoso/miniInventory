@@ -44,22 +44,22 @@
                 <ul class="nav navbar-nav">
 
                     <li>
-                        <a href="{{ url_for('add_product') }}">Agregar productos</a>
+                        <a href="{{ url_for('add', item='product') }}">Agregar productos</a>
                     </li>
                     <li>
                         <a href="{{ url_for('see_products') }}">Ver productos</a>
                     </li>
                     <li>
-                        <a href="{{ url_for('add_brand') }}">Agregar Marca</a>
+                        <a href="{{ url_for('add', item='brand') }}">Agregar Marca</a>
                     </li>
                     <li>
-                        <a href="{{ url_for('add_supplier') }}">Agregar proveedores</a>
+                        <a href="{{ url_for('add', item='supplier') }}">Agregar proveedores</a>
                     </li>
                     <li>
-                        <a href="{{ url_for('add_tool') }}">Agregar herramientas</a>
+                        <a href="{{ url_for('add', item='tool') }}">Agregar herramientas</a>
                     </li>
                     <li>
-                        <a href="{{ url_for('add_compound') }}">Agregar insumos</a>
+                        <a href="{{ url_for('add', item='compound') }}">Agregar insumos</a>
                     </li>
 
                 </ul>

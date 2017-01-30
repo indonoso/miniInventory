@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, PrimaryKeyConstraint
-from sqlalchemy import Table, Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -8,6 +7,8 @@ Base = declarative_base()
 
 
 db = SQLAlchemy()
+association_table = db.Table('association', db.Column('brand', db.Integer, ForeignKey('brand.id_')),
+                             db.Column('supplier', db.Integer, ForeignKey('supplier.id_')))
 
 
 class Supplier(db.Model):
@@ -32,13 +33,18 @@ class Brand(db.Model):
     id_ = db.Column(db.Integer, primary_key=True, autoincrement=True)
     abbreviation = db.Column(db.String(10))
     comments = db.Column(db.Text)
-    supplier = db.Column(db.Integer, ForeignKey('supplier.id_'))
+    suppliers = relationship("Supplier", secondary=association_table)
 
-    def __init__(self, name=None, abbreviation=None, comments=None, id_=None,  **kwargs):
+    def __init__(self, name=None, abbreviation=None, comments=None, id_=None, supplier=[], **kwargs):
         self.name = name
         self.abbreviation = abbreviation
         self.comments = comments
         self.id_ = id_
+        self.suppliers = []
+        for s in supplier:
+            self.suppliers.append(Supplier.query.get(s))
+
+
 
 
 class Product(db.Model):
