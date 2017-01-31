@@ -58,7 +58,7 @@ class ToolForm(FlaskForm):
 class ProductionNeedsForm(FlaskForm):
     product_in = SelectField('Insumo/Herramienta', [InputRequired], coerce=int, choices=[])
     quantity = IntegerField('Cantidad', [InputRequired()])
-    comments = TextAreaField('Objetivo', render_kw={"placeholder": "Uso"})
+    comment = TextAreaField('Objetivo', render_kw={"placeholder": "Uso"})
 
 
 class PurchaseForm(FlaskForm):

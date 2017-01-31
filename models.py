@@ -90,11 +90,12 @@ class ProductionNeeds(db.Model):
         PrimaryKeyConstraint('product_out', 'product_in'),
     )
 
-    def __init__(self, product_out=None, product_in=None, quantity=None, id_=None,  **kwargs):
+    def __init__(self, product_out=None, product_in=None, quantity=None, id_=None, comment=None,  **kwargs):
         self.product_out = product_out
         self.product_in = product_in
         self.quantity = quantity
         self.id_ = id_
+        self.comment = comment
 
 
 class Purchase(db.Model):

@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, redirect
 from config import APP_SETTINGS
 from forms import db
+
 import json
 app = Flask(__name__)
 app.config.from_object(APP_SETTINGS)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 PRODUCTS_PER_PAGE = 20
-from forms import FinishedProductForm, BrandForm, Product, SupplierForm, Production, ProductionNeeds, Brand, Purchase, Sale, Supplier, ToolForm, CompoundForm
+from forms import FinishedProductForm, BrandForm, Product, SupplierForm, Production, ProductionNeeds, ProductionNeedsForm, Brand, Purchase, Sale, Supplier, ToolForm, CompoundForm
 
 
 forms = dict(product=(FinishedProductForm, Product, dict(type_="finished", unit="un"), 'add.html', 'brand', False),
@@ -46,13 +47,14 @@ def add(item):
 
 @app.route('/add/component/<int:product_id>', methods=['POST'])
 def add_component(product_id):
-    form = ProductionNeeds(request.form)
-    if request.method == 'POST' and form.validate():
+    form = ProductionNeedsForm(request.form)
+
+    if request.method == 'POST':
         relation = ProductionNeeds(product_out=product_id, **form.data)
         db.session.add(relation)
         db.session.commit()
-        return 201
-    return 400
+        return json.dumps({'success':True}), 201, {'ContentType':'application/json'}
+    return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
 
 @app.route("/query_all/<string:type_>", methods=["GET"])
