@@ -2,38 +2,44 @@
 {% block body %}
 
 <div class="col-lg-12 col-md-12 col-xs-12">
-    <h1 class="page-header">{{ product.name }}</h1>
+    <h1 class="page-header">{{ item.name }}</h1>
     <div class="row">
         <div class="col-lg-6 col-md-6 col-xs-12">
-            <img src="{{ product.image }}" class="product center-block" alt="{{product.name}}">
+            {% if item.image %}
+                <img src="{{ item.image }}" class="product center-block" alt="{{item.name}}">
+            {% else %}
+                {{item.name}}
+            {% endif %}
         </div>
 
         <div class="col-lg-6 col-md-6 col-xs-12">
             <dl class="dl-horizontal">
                 <dt>Tipo de producto</dt>
-                <dd>{{product.type_}}</dd>
+                <dd>{{item.type_}}</dd>
                 <dt>Unidad de medida</dt>
-                <dd>{{product.unit}}</dd>
+                <dd>{{item.unit}}</dd>
                 <dt>Marca</dt>
-                <dd>{{product.brand}}</dd>
+                <dd>{{item.brand}}</dd>
                 <dt>Descripción</dt>
-                <dd>{{product.description}}</dd>
+                <dd>{{item.description}}</dd>
                 <dt>Tiempo de producción</dt>
-                <dd>{{product.production_time}}</dd>
+                <dd>{{item.production_time}}</dd>
                 <dt>Color</dt>
-                <dd>{{product.color}}</dd>
+                <dd>{{item.color}}</dd>
                 <dt>Forma</dt>
-                <dd>{{product.forma}}</dd>
+                <dd>{{item.form}}</dd>
                 <dt>Cantidad en stock</dt>
-                <dd>{{product.current_quantity}} {{product.unit}}</dd>
+                <dd>{{item.current_quantity}} {{item.unit}}</dd>
                 <dt>Precio de venta</dt>
-                <dd>{{product.current_selling_price}}</dd>
+                <dd>{{item.current_selling_price}}</dd>
             </dl>
         </div>
     </div>
+    {% if item.type_ == "finished" %}
+
     <div class="row">
         <div class="col-lg-6 col-md-6 col-xs-12">
-            <form id="component" class="form-horizontal" method="POST" action="/add/component/{{product.id_}}"
+            <form id="component" class="form-horizontal" method="POST" action="/add/component/{{item.id_}}"
                   onsubmit="addComponent(this)">
                 <div class="form-group">
                     <label for="product_in" class="control-label col-sm-2">Producto</label>
@@ -97,6 +103,7 @@
 
         </div>
     </div>
+    {% endif %}
 </div>
 
 

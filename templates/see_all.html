@@ -1,13 +1,17 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="col-lg-12">
-    <h1 class="page-header">Productos</h1>
+    <h1 class="page-header">{{item_type}}</h1>
 </div>
-{% for p in products.items %}
+{% for i in all_items.items %}
 
 <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-    <a class="thumbnail" href="{{ url_for('see_product', product_id=p.id_) }}">
-        <img class="img-responsive" src="{{ p.image }}" alt="">
+    <a class="thumbnail" href="{{ url_for('see_item', item=item_type, item_id=i.id_) }}">
+        {% if i.image %}
+            <img class="img-responsive" src="{{ i.image }}" alt="{{i.name}}">
+        {% else %}
+            {{i.name}}
+        {% endif %}
     </a>
 </div>
 {% endfor %}
@@ -17,18 +21,18 @@
     <nav aria-label="Page navigation">
   <ul class="pager">
     <li>
-        {% if products.has_prev %}
-        <a href="{{ url_for('see_products', page=products.prev_num) }}" ><span aria-hidden="true">&laquo;</span></a>
+        {% if all_items.has_prev %}
+        <a href="{{ url_for('see_all', item=item_type, page=all_items.prev_num) }}" ><span aria-hidden="true">&laquo;</span></a>
         {% else %}
-        <a href="{{ url_for('see_products', page=products.prev_num) }}" class="disabled"><span aria-hidden="true">&laquo;</span></a>
+        <a href="{{ url_for('see_all', item=item_type, page=all_items.prev_num) }}" class="disabled"><span aria-hidden="true">&laquo;</span></a>
         {% endif %}
 
     </li>
     <li>
-      {% if products.has_next %}
-        <a href="{{ url_for('see_products', page=products.next_num) }}" ><span aria-hidden="true">&raquo;</span></a>
+      {% if all_items.has_next %}
+        <a href="{{ url_for('see_all', item=item_type, page=all_items.next_num) }}" ><span aria-hidden="true">&raquo;</span></a>
         {% else %}
-        <a href="{{ url_for('see_products', page=products.next_num) }}" class="disabled" ><span aria-hidden="true">&raquo;</span></a>
+        <a href="{{ url_for('see_all', item=item_type, page=all_items.next_num) }}" class="disabled" ><span aria-hidden="true">&raquo;</span></a>
         {% endif %}
     </li>
   </ul>
