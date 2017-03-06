@@ -80,18 +80,14 @@ class Product(db.Model):
 
 class ProductionNeeds(db.Model):
     __tablename__ = 'production_needs'
-    product_out = db.Column(db.Integer, ForeignKey('product.id_'))
-    product_in = db.Column(db.Integer, ForeignKey('product.id_'))
-    quantity = db.Column(db.Integer)
+    product = db.Column(db.Integer, ForeignKey('product.id_'), nullable=False)
+    product_in = db.Column(db.Integer, ForeignKey('product.id_'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.Text)
-    id_ = db.Column(db.Integer, autoincrement=True)
+    id_ = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
 
-    __table_args__ = (
-        PrimaryKeyConstraint('product_out', 'product_in'),
-    )
-
-    def __init__(self, product_out=None, product_in=None, quantity=None, id_=None, comment=None,  **kwargs):
-        self.product_out = product_out
+    def __init__(self, product=None, product_in=None, quantity=None, id_=None, comment=None,  **kwargs):
+        self.product = product
         self.product_in = product_in
         self.quantity = quantity
         self.id_ = id_

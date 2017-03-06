@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="col-lg-12 col-md-12 col-xs-12">
+    <h1 class="page-header">{{ product.name }}</h1>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-xs-12">
+            <img src="{{ product.image }}" class="product center-block" alt="{{product.name}}">
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-xs-12">
+            <dl class="dl-horizontal">
+                <dt>Tipo de producto</dt>
+                <dd>{{product.type_}}</dd>
+                <dt>Unidad de medida</dt>
+                <dd>{{product.unit}}</dd>
+                <dt>Marca</dt>
+                <dd>{{product.brand}}</dd>
+                <dt>Descripción</dt>
+                <dd>{{product.description}}</dd>
+                <dt>Tiempo de producción</dt>
+                <dd>{{product.production_time}}</dd>
+                <dt>Color</dt>
+                <dd>{{product.color}}</dd>
+                <dt>Forma</dt>
+                <dd>{{product.forma}}</dd>
+                <dt>Cantidad en stock</dt>
+                <dd>{{product.current_quantity}} {{product.unit}}</dd>
+                <dt>Precio de venta</dt>
+                <dd>{{product.current_selling_price}}</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-xs-12">
+            <form id="component" class="form-horizontal" method="POST" action="/add/component/{{product.id_}}"
+                  onsubmit="addComponent(this)">
+                <div class="form-group">
+                    <label for="product_in" class="control-label col-sm-2">Producto</label>
+                    <div class="col-sm-10 input-group">
+                        <select id="product_in" class="form-control" onchange="loadUnit()">
+                            {% for p in products%}
+                            <option value="{{p.id_}}">{{p.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="label_quantity" for="quantity" class="col-sm-2 control-label">Cantidad</label>
+                    <div class="col-sm-10 input-group">
+                        <input type="number" id="quantity" class="form-control" placeholder="Cantidad en ">
+                        <span class="input-group-addon" id="add_on_product_in">unit</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="label_comment" class="col-sm-2 control-label" for="comment">Comentario</label>
+                    <div class="col-sm-10 input-group">
+                        <input type="text" id="comment" class="form-control" placeholder="Para qué va a servir?">
+                    </div>
+                </div>
+                <div class="col-sm-4 col-sm-offset-2 input-group">
+                <input id="form_btn" type="submit" class="btn btn-primary" value="Agregar">
+                    </div>
+            </form>
+        </div>
+        <div class="col-lg-6 col-md-6 col-xs-12">
+            <div class="panel-group" id="components_list" role="tablist" aria-multiselectable="true">
+                {% for pi in products_in %}
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading{{pi.id_}}">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#component_list"
+                               href="#collapse{{pi.id_}}"
+                               aria-expanded="true" aria-controls="collapse{{pi.id_}}">
+                                {{products_in_names[pi.product_in]}}
+                            </a>
+                            <a onclick="editProduct('{{pi.id_}}')" href="#">
+                                   <span class="glyphicon glyphicon-edit"></span>
+                            </a>
+                        </h4>
+                        </div>
+                    <div id="collapse{{pi.id_}}" class="panel-collapse collapse" role="tabpanel"
+                         aria-labelledby="heading{{pi.id_}}">
+                        <div class="panel-body">
+                            <dt>Cantidad</dt>
+                            <dd>{{pi.quantity}} {{pi.product_in.unit}}</dd>
+                            <dt>Comentarios</dt>
+                            <dd>{{pi.comment}}</dd>
+                        </div>
+                    </div>
+                </div>
+
+
+            {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
