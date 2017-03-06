@@ -2,13 +2,30 @@
 {% block body %}
     <div class="col-lg-12">
 {% from "_formhelpers.html" import render_field %}
- <form action="{{ url_for('add', item=item) }}" class="form-horizontal" method="POST">
+ <form action="{{ url_for('add', item=item) }}" class="form" method="POST">
      {% for field in form %}
      <div class="form-group">
         {{ render_field(field) }}
-         </div>
-     {% endfor%}
+     </div>
+     {% endfor %}
      <input type=submit value=Register>
  </form>
       </div>
+
+{% if brand is not none: %}
+<script>
+    var items = {{ items | safe }}
+    $('#brand').selectize({
+        options: items,
+        create: true,
+        valueField: 'id',
+    labelField: 'title',
+    searchField: 'title',
+        maxItems: 1,
+        selectOnTab: true,
+        createOnBlur: true,
+        openOnFocus: true
+    });
+</script>
+{% endif %}
 {% endblock %}

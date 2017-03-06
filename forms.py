@@ -21,7 +21,7 @@ class BrandForm(FlaskForm):
 
 class FinishedProductForm(FlaskForm):
     name = StringField('Nombre', [InputRequired()])
-    brand = SelectField('Marca', coerce=int,  choices=[])
+    brand = StringField('Marca', render_kw={'autocomplete': "off"})
     production_time = IntegerField('Tiempo mínimo de producción', [InputRequired()], render_kw={"placeholder": "En horas"})
     description = TextAreaField('Descripción')
     current_selling_price = IntegerField('Precio de venta')
@@ -34,8 +34,8 @@ class FinishedProductForm(FlaskForm):
 class CompoundForm(FlaskForm):
     name = StringField('Nombre', [validators.required()])
     unit = SelectField('Unidad de medida', coerce=str,
-                       choices=[('kg', 'Kilos'), ('mt', "Metros"), ('lt', "Litros"), ("un", "Unidad")], default=3)
-    brand = SelectField('Marca', coerce=int,  choices=[])
+                       choices=[('kg', 'Kilos'), ('mt', "Metros"), ('lt', "Litros"), ("un", "Unidad")], default=3, render_kw={'autocomplete': "off"})
+    brand = StringField('Marca', render_kw={'autocomplete': "off"})
     description = TextAreaField('Descripción')
     current_selling_price = IntegerField('Precio de venta')
     current_quantity = IntegerField('Cantidad actual en inventario')
@@ -46,7 +46,7 @@ class CompoundForm(FlaskForm):
 
 class ToolForm(FlaskForm):
     name = StringField('Nombre', [validators.required()])
-    brand = SelectField('Marca', coerce=int, choices=[])
+    brand = StringField('Marca', render_kw={'autocomplete': "off"})
     description = TextAreaField('Descripción')
     current_selling_price = IntegerField('Precio de venta')
     current_quantity = IntegerField('Cantidad actual en inventario')
@@ -58,7 +58,7 @@ class ToolForm(FlaskForm):
 class ProductionNeedsForm(FlaskForm):
     product_in = SelectField('Insumo/Herramienta', [InputRequired], coerce=int, choices=[])
     quantity = IntegerField('Cantidad', [InputRequired()])
-    comment = TextAreaField('Objetivo', render_kw={"placeholder": "Uso"})
+    comment = TextAreaField('Objetivo', render_kw={"placeholder": "Sirve para?"})
 
 
 class PurchaseForm(FlaskForm):
