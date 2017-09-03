@@ -18,6 +18,7 @@ class Supplier(db.Model):
     abbreviation = db.Column(db.String(10))
     address = db.Column(db.Text)
     comments = db.Column(db.Text)
+    image = db.Column(db.Text)
 
     def __init__(self, name=None, abbreviation=None, address=None, comments=None, id_=None, **kwargs):
         self.name = name
@@ -25,6 +26,7 @@ class Supplier(db.Model):
         self.address = address
         self.comments = comments
         self.id_ = id_
+        self.image = image
 
 
 class Brand(db.Model):
@@ -33,6 +35,7 @@ class Brand(db.Model):
     id_ = db.Column(db.Integer, primary_key=True, autoincrement=True)
     abbreviation = db.Column(db.String(10))
     comments = db.Column(db.Text)
+    image = db.Column(db.Text)
     suppliers = relationship("Supplier", secondary=association_table)
 
     def __init__(self, name=None, abbreviation=None, comments=None, id_=None, supplier=[], **kwargs):
@@ -41,6 +44,7 @@ class Brand(db.Model):
         self.comments = comments
         self.id_ = id_
         self.suppliers = []
+        self.image = image
         for s in supplier:
             self.suppliers.append(Supplier.query.get(s))
 

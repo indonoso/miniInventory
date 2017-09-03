@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="col-lg-12 col-md-12 col-xs-12">
+    <h1 class="page-header">{{ item.name }}</h1>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-xs-12">
+            {% if item.image %}
+                <img src="{{ item.image }}" class="product center-block" alt="{{item.name}}">
+            {% else %}
+                {{item.name}}
+            {% endif %}
+        </div>
+</div>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-xs-12">
+                <div class="list-group">
+                    // TODO sii item type es brand, es así. Si no es con el tipo de producto
+                    {%for i in items%}
+                    <a href="/see_item/{{item_type}}/{{i.id_}}" class="list-group-item">{{i.name}}</a>
+                    {%endfor%}
+                </div>
+        </div>
+    </div>
+    </div>
+
+
+
+{% endblock %}

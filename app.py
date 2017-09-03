@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect
 from config import APP_SETTINGS
 from forms import db
-
+import os
+from werkzeug.utils import secure_filename
 import json
 app = Flask(__name__)
 app.config.from_object(APP_SETTINGS)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.instance_path = 'DATA/'
 db.init_app(app)
 PRODUCTS_PER_PAGE = 20
 from forms import FinishedProductForm, BrandForm, Product, SupplierForm, Production, ProductionNeeds, ProductionNeedsForm, Brand, Purchase, Sale, Supplier, ToolForm, CompoundForm
@@ -27,23 +29,30 @@ def index():
 
 @app.route('/add/<item>', methods=['GET', 'POST'])
 def add(item):
-    form_class, item_class, kwargs, template, choices, redirect_form = forms[item]
+    form_class, item_class, kwargs, template, choose_for, redirect_form = forms[item]
     form = form_class(request.form)
-    if choices == 'brand':
-        form.brand.choices = [(b.id_, b.name) for b in Brand.query.all()]
-    elif choices == "supplier":
+    choices = []
+    if choose_for == 'brand':
+        choices= {b.name: b.id_ for b in Brand.query.all()}
+    elif choose_for == "supplier":
         form.supplier.choices = [(s.id_, s.name) for s in Supplier.query.all()]
 
     if request.method == 'POST' and form.validate():
-        form.data['brand'] = int(form.data['brand'])
+        f = form.photo.data
+        filename = secure_filename(form.data['brand'] +"_" + form.data['name'])
+        f.save(os.path.join(app.instance_path, 'photos', filename))
+
+
         item_ = item_class(**form.data, **kwargs)
+        if choose_for == 'brand':
+            item_.brand = choices[form.data['brand']]
         db.session.add(item_)
         db.session.commit()
         if redirect_form:
             return redirect('/add/' + item)
         else:
             return redirect('see_item/{}/{}'.format(item, str(item_.id_)))
-    return render_template(template, form=form, item=item, items=json.dumps([{'id': b.id_, 'title': b.name} for b in Brand.query.all()]))
+    return render_template(template, form=form, item=item, select_from=choices)
 
 
 @app.route('/add/component/<int:product_id>', methods=['POST', 'PUT'])
@@ -83,24 +92,26 @@ def see_all(item, page=1):
     return render_template('see_all.html', all_items=all_items, item_type=item)
 
 
-@app.route('/see_item/<item>/<int:item_id>', methods=['GET'])
-def see_item(item, item_id):
-    products = None
-    products_in = None
-    products_in_names = None
-    if item in ["finished", "compound", "tool"]:
+@app.route('/see_item/<item_type>/<int:item_id>', methods=['GET'])
+def see_item(item_type, item_id):
+    if item_type in ["finished", "compound", "tool"]:
         item = Product.query.get(item_id)
         products = Product.query.all()
         products_in = ProductionNeeds.query.filter(ProductionNeeds.product == item_id).all()
         products_in_names = dict()
         for p in products_in:
             products_in_names[p.product_in] = Product.query.filter(Product.id_ == p.product_in).first().name
-    elif item == "supplier":
+        return render_template('see_item.html', item=item, products=products, products_in=products_in, products_in_names=products_in_names)
+    elif item_type == "supplier":
         item = Supplier.query.get(item_id)
-    elif item == "brand":
+        items = Brand.query.filter(Brand.suppliers.any(id_=item_id)).all()
+        item_type_display = "brand"
+    elif item_type == "brand":
         item = Brand.query.get(item_id)
+        items =Product.query.filter(Product.brand==item_id).all()
+        item_type_display = 'product'
+    return render_template('see_supplier_brand.html', item=item, items=items, item_type=item_type_display)
 
-    return render_template('see_item.html', item=item, products=products, products_in=products_in, products_in_names=products_in_names)
 
 
 @app.route('/product/get_unit/<int:product_id>')
