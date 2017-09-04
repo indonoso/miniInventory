@@ -39,12 +39,16 @@ def add(item):
         form.supplier.choices = [(s.id_, s.name) for s in Supplier.query.all()]
 
     if request.method == 'POST' and form.validate():
-        f = request.files['image']
-        filename = secure_filename(form.data['brand'] +"_" + form.data['name'] + form.data['image'][:-4])
-        f.save(os.path.join(app.instance_path, 'photos', filename))
-
         item_ = item_class(**form.data, **kwargs)
-        item_.image =os.path.join(app.instance_path, 'photos', filename)
+        f = request.files['image']
+        if f is not None:
+            if item in ["finished", "compound", "tool"]:
+                filename = secure_filename(item + "_" + form.data['brand'] +"_" + form.data['name'] + form.data['image'][:-4])
+            else:
+                filename = secure_filename(item + "_" + form.data['name'] + form.data['image'][:-4])
+
+            f.save(os.path.join(app.instance_path, 'photos', filename))
+            item_.image =os.path.join(app.instance_path, 'photos', filename)
         if choose_for == 'brand':
             item_.brand = choices[form.data['brand']]
         db.session.add(item_)
