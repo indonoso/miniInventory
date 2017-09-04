@@ -11,6 +11,7 @@ app.instance_path = 'DATA/'
 db.init_app(app)
 PRODUCTS_PER_PAGE = 20
 from forms import FinishedProductForm, BrandForm, Product, SupplierForm, Production, ProductionNeeds, ProductionNeedsForm, Brand, Purchase, Sale, Supplier, ToolForm, CompoundForm
+from models import association_table
 
 
 forms = dict(finished=(FinishedProductForm, Product, dict(type_="finished", unit="un"), 'add.html', 'brand', False),
@@ -38,12 +39,12 @@ def add(item):
         form.supplier.choices = [(s.id_, s.name) for s in Supplier.query.all()]
 
     if request.method == 'POST' and form.validate():
-        f = form.photo.data
-        filename = secure_filename(form.data['brand'] +"_" + form.data['name'])
+        f = request.files['image']
+        filename = secure_filename(form.data['brand'] +"_" + form.data['name'] + form.data['image'][:-4])
         f.save(os.path.join(app.instance_path, 'photos', filename))
 
-
         item_ = item_class(**form.data, **kwargs)
+        item_.image =os.path.join(app.instance_path, 'photos', filename)
         if choose_for == 'brand':
             item_.brand = choices[form.data['brand']]
         db.session.add(item_)
@@ -75,10 +76,6 @@ def add_component(product_id):
     return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
 
 
-@app.route("/query_all/<string:type_>", methods=["GET"])
-def query_all(type_):
-    return Product.query.filter(Product.type_ == type_)
-
 
 @app.route('/see_all/<item>', methods=['GET'])
 @app.route('/see_all/<item>/<int:page>', methods=['GET'])
@@ -94,23 +91,36 @@ def see_all(item, page=1):
 
 @app.route('/see_item/<item_type>/<int:item_id>', methods=['GET'])
 def see_item(item_type, item_id):
+    products = None
+    brands = None
+    suppliers = None
+
     if item_type in ["finished", "compound", "tool"]:
         item = Product.query.get(item_id)
+        #
+        item.image = os.path.join(app.instance_path, 'photos', item.image) if item.image is not None else None
         products = Product.query.all()
         products_in = ProductionNeeds.query.filter(ProductionNeeds.product == item_id).all()
         products_in_names = dict()
         for p in products_in:
             products_in_names[p.product_in] = Product.query.filter(Product.id_ == p.product_in).first().name
+        item.brand = (item.brand, Brand.query.get(item.brand).name)
         return render_template('see_item.html', item=item, products=products, products_in=products_in, products_in_names=products_in_names)
+
+
     elif item_type == "supplier":
         item = Supplier.query.get(item_id)
-        items = Brand.query.filter(Brand.suppliers.any(id_=item_id)).all()
-        item_type_display = "brand"
+        item.image = os.path.join(app.instance_path, 'photos', item.image) if item.image is not None else None
+        brands = Brand.query.join(association_table).join(Supplier).filter(association_table.c.brand == Brand.id_ and association_table.c.supplier == Supplier.id_).all()
+
     elif item_type == "brand":
         item = Brand.query.get(item_id)
-        items =Product.query.filter(Product.brand==item_id).all()
-        item_type_display = 'product'
-    return render_template('see_supplier_brand.html', item=item, items=items, item_type=item_type_display)
+        item.image = os.path.join(app.instance_path, 'photos', item.image) if item.image is not None else None
+        suppliers = Supplier.query.join(association_table).join(Brand).filter(association_table.c.brand == Brand.id_ and association_table.c.supplier == Supplier.id_).all()
+        products = Product.query.filter(Product.brand == item_id).all()
+
+
+    return render_template('see_supplier_brand.html', type_=item_type, item=item, brands=brands, suppliers=suppliers, products=products)
 
 
 

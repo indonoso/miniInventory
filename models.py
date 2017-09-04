@@ -20,7 +20,7 @@ class Supplier(db.Model):
     comments = db.Column(db.Text)
     image = db.Column(db.Text)
 
-    def __init__(self, name=None, abbreviation=None, address=None, comments=None, id_=None, **kwargs):
+    def __init__(self, name=None, abbreviation=None, address=None, comments=None, id_=None, image=None, **kwargs):
         self.name = name
         self.abbreviation = abbreviation
         self.address = address
@@ -38,7 +38,7 @@ class Brand(db.Model):
     image = db.Column(db.Text)
     suppliers = relationship("Supplier", secondary=association_table)
 
-    def __init__(self, name=None, abbreviation=None, comments=None, id_=None, supplier=[], **kwargs):
+    def __init__(self, name=None, abbreviation=None, comments=None, id_=None, supplier=[],image=None, **kwargs):
         self.name = name
         self.abbreviation = abbreviation
         self.comments = comments

@@ -2,7 +2,7 @@
 {% block body %}
 <div class="col-lg-12">
     {% from "_formhelpers.html" import render_field %}
-    <form action="{{ url_for('add', item=item) }}" class="form" method="POST">
+    <form action="{{ url_for('add', item=item) }}" class="form" method="POST" enctype="multipart/form-data">
         {% for field in form %}
         <div class="form-group">
             {{ render_field(field) }}

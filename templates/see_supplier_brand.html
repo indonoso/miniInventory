@@ -4,26 +4,55 @@
 <div class="col-lg-12 col-md-12 col-xs-12">
     <h1 class="page-header">{{ item.name }}</h1>
     <div class="row">
-        <div class="col-lg-12 col-md-12 col-xs-12">
+        
+        <div class="col-lg-4 col-md-6 col-xs-12">
             {% if item.image %}
-                <img src="{{ item.image }}" class="product center-block" alt="{{item.name}}">
+            <img src="{{ item.image }}" class="product center-block" alt="{{item.name}}">
             {% else %}
-                {{item.name}}
+            {{item.name}}
             {% endif %}
         </div>
-</div>
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-xs-12">
-                <div class="list-group">
-                    // TODO sii item type es brand, es así. Si no es con el tipo de producto
-                    {%for i in items%}
-                    <a href="/see_item/{{item_type}}/{{i.id_}}" class="list-group-item">{{i.name}}</a>
-                    {%endfor%}
-                </div>
+        
+        <div class="col-lg-6 col-md-6 col-xs-12">
+            <h4>Características</h4>
+            <dl class="dl-horizontal">
+                <dt>Nombre abreviado</dt>
+                <dd>{{item.abbreviation}}</dd>
+                {% if type_ == 'supplier' %}
+                <dt>Dirección</dt>
+                <dd>{{item.address}}</dd>
+                {% endif %}
+                <dt>Comentarios</dt>
+                <dd>{{item.comments}}</dd>
+            </dl>
+            {% if type_ == 'brand' %}
+                <h4>Este producto se vende en:</h4>
+                <ul>
+                    
+                    {% for s in suppliers %}
+                    <li><a href="/see_item/supplier/{{ s.id_ }}">{{ s.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            
+            <h4>Esta marca tiene estos productos:</h4>
+                <ul>
+                    
+                    {% for s in products %}
+                    <li><a href="/see_item/{{s.type_}}/{{ s.id_ }}">{{ s.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+            <h4>Esta proveedor vende las siguientes marcas:</h4>
+                <ul>
+                    
+                    {% for s in brands %}
+                    <li><a href="/see_item/brand/{{ s.id_ }}">{{ s.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        
         </div>
     </div>
-    </div>
-
-
+</div>
 
 {% endblock %}
