@@ -41,7 +41,7 @@ def add(item):
     if request.method == 'POST' and form.validate():
         item_ = item_class(**form.data, **kwargs)
         f = request.files['image']
-        if f is not None:
+        if f is not None and form.data['image']:
             if item in ["finished", "compound", "tool"]:
                 filename = secure_filename(item + "_" + form.data['brand'] +"_" + form.data['name'] + form.data['image'][:-4])
             else:
