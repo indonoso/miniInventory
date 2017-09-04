@@ -45,6 +45,8 @@ def add(item):
             if item in ["finished", "compound", "tool"]:
                 filename = secure_filename(item + "_" + form.data['brand'] +"_" + form.data['name'] + form.data['image'][:-4])
             else:
+                print(f)
+                print(form.data['image'])
                 filename = secure_filename(item + "_" + form.data['name'] + form.data['image'][:-4])
 
             f.save(os.path.join(app.instance_path, 'photos', filename))
